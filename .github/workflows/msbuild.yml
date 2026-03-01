@@ -43,3 +43,17 @@ jobs:
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} ${{env.SOLUTION_FILE_PATH}}
+
+      # 自动发布到 Release
+    - name: Create Release and Upload EXE
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v1.0.${{ github.run_number }} # 自动生成版本号，如 v1.0.1, v1.0.2
+        name: Release v1.0.${{ github.run_number }}
+        draft: false
+        prerelease: false
+        # 这里的 path 需要匹配你实际生成的 exe 路径
+        # **/ 表示在所有文件夹下搜索 bin/Release 里的 exe
+        files: |
+          **/bin/Release/**/*.exe
+          **/bin/Release/**/*.dll
