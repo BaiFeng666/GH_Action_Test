@@ -45,12 +45,14 @@ jobs:
     - name: Create Release and Upload EXE
       uses: softprops/action-gh-release@v2
       with:
+        # 1. 自动生成版本号
         tag_name: v1.0.${{ github.run_number }}
         name: Release v1.0.${{ github.run_number }}
         draft: false
         prerelease: false
-        # 使用更精准的路径匹配
+        # 2. 修正后的参数名：使用 token 而不是 GITHUB_TOKEN
+        token: ${{ secrets.GITHUB_TOKEN }}
+        # 3. 确保 files 后面只有路径，env 要和 files 对齐
         files: |
           **/x64/Release/*.exe
-          **/x64/Release/*.dllenv:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          **/x64/Release/*.dll
