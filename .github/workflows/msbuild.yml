@@ -40,8 +40,12 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 /p:OutputPath=../output ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 ${{env.SOLUTION_FILE_PATH}}
 
+    # 调试步骤：如果还是找不到文件，这步会在日志里打印出 exe 的准确位置
+    - name: Check where the EXE is
+      run: dir /s /b *.exe
+      
     - name: Create Release and Upload EXE
       uses: softprops/action-gh-release@v2
       with:
@@ -50,8 +54,8 @@ jobs:
         draft: false
         prerelease: false
         token: ${{ secrets.GITHUB_TOKEN }}
-        # 路径改为我们刚才指定的 output 目录
+        # 使用双星号递归搜索，这能解决 99% 的路径找不到问题
         files: |
-          output/*.exe
-          output/*.dll
+          **/*.exe
+          **/*.dll
         fail_on_unmatched_files: false
